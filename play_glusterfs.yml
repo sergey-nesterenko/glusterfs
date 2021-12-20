@@ -1,0 +1,38 @@
+---
+- name: DEPLOY Glusterfs CLUSTER
+  hosts: gfs_servers
+  become: yes
+
+  vars:
+    play_hosts: "{{ groups.gfs_servers }}"
+    gluster_v: 9
+
+  tasks:
+
+    - name: INSTALL repo
+      yum:
+        name: centos-release-gluster{{ gluster_v }}
+        state: present
+        update_cache: yes
+
+    - name: INSTALL glusterfs-server
+      yum:
+        name: ['glusterfs','glusterfs-libs','glusterfs-server']
+        state: present
+        update_cache: yes
+
+    - name: START glusterd service
+      service: name=glusterd state=started enabled=yes
+
+    - name: CHECK IF NODE IN CLUSTER
+      shell: find_node=$(gluster pool list|grep '{{ ansible_host }}'|head -n1 2>/dev/null); if [[ -n "$find_node" ]]; then echo "is"; else echo "not"; fi;
+      register: is_node
+      delegate_to: "{{ play_hosts[0] }}"
+
+    - name: ADD NODES TO CLUSTER
+      shell: gluster peer probe {{ ansible_host }}
+      delegate_to: "{{ play_hosts[0] }}"
+      ignore_errors: yes
+      when: is_node.stdout == "not"
+      
+      

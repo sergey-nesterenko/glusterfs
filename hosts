@@ -1,0 +1,7 @@
+[gfs_servers]
+gfs1 ansible_host=10.18.8.23 hostname=vml-hq-dev-dba-1
+gfs2 ansible_host=10.18.8.24 hostname=vml-hq-dev-dba-2
+gfs3 ansible_host=10.18.8.25 hostname=vml-hq-dev-dba-3
+gfs4 ansible_host=10.18.8.55 hostname=vml-hq-dev-zk-1
+gfs5 ansible_host=10.18.8.56 hostname=vml-hq-dev-zk-2
+gfs6 ansible_host=10.18.8.57 hostname=vml-hq-dev-zk-3
